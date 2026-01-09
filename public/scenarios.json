@@ -1,0 +1,94 @@
+[
+  {
+    "id": "unpaid-invoices",
+    "name": "Unpaid Invoices",
+    "description": "Get all authorised invoices with outstanding amounts",
+    "endpoint": "https://api.xero.com/api.xro/2.0/Invoices",
+    "method": "GET",
+    "parameters": [
+      {
+        "name": "where",
+        "type": "hidden",
+        "value": "Status==\"AUTHORISED\" AND AmountDue>0"
+      }
+    ],
+    "displayFields": ["InvoiceNumber", "Contact.Name", "Date", "DueDate", "Total", "AmountDue", "Status"]
+  },
+  {
+    "id": "overdue-invoices",
+    "name": "Overdue Invoices",
+    "description": "Get invoices that are past their due date with amounts owed",
+    "endpoint": "https://api.xero.com/api.xro/2.0/Invoices",
+    "method": "GET",
+    "parameters": [
+      {
+        "name": "where",
+        "type": "hidden",
+        "value": "Status==\"AUTHORISED\" AND DueDate<DateTime.Now AND AmountDue>0"
+      }
+    ],
+    "displayFields": ["InvoiceNumber", "Contact.Name", "Date", "DueDate", "Total", "AmountDue", "Status"]
+  },
+  {
+    "id": "recent-payments",
+    "name": "Recent Payments",
+    "description": "Get payments received in the specified date range",
+    "endpoint": "https://api.xero.com/api.xro/2.0/Payments",
+    "method": "GET",
+    "parameters": [
+      {
+        "name": "dateRange",
+        "type": "select",
+        "label": "Date Range",
+        "required": true,
+        "options": [
+          { "label": "Last 30 days", "value": "30" },
+          { "label": "Last 60 days", "value": "60" },
+          { "label": "Last 90 days", "value": "90" }
+        ],
+        "default": "30"
+      }
+    ],
+    "displayFields": ["Date", "PaymentType", "Amount", "Reference", "Status", "Invoice.InvoiceNumber"]
+  },
+  {
+    "id": "bank-transactions-date-range",
+    "name": "Bank Transactions by Date Range",
+    "description": "Get bank transactions filtered by custom date range",
+    "endpoint": "https://api.xero.com/api.xro/2.0/BankTransactions",
+    "method": "GET",
+    "parameters": [
+      {
+        "name": "fromDate",
+        "type": "date",
+        "label": "From Date",
+        "required": true
+      },
+      {
+        "name": "toDate",
+        "type": "date",
+        "label": "To Date",
+        "required": true
+      }
+    ],
+    "displayFields": ["Date", "Type", "Contact.Name", "Reference", "Total", "Status"]
+  },
+  {
+    "id": "unreconciled-bank-transactions",
+    "name": "Unreconciled Bank Transactions",
+    "description": "Summary of unreconciled transactions by all bank accounts",
+    "endpoint": "https://api.xero.com/api.xro/2.0/BankTransactions",
+    "method": "GET",
+    "parameters": [
+      {
+        "name": "where",
+        "type": "hidden",
+        "value": "Status==\"AUTHORISED\" AND IsReconciled==false"
+      }
+    ],
+    "displayFields": ["BankAccount.Name", "BankAccount.Code"],
+    "aggregateByAccount": true,
+    "fetchAllAccounts": true,
+    "accountsEndpoint": "https://api.xero.com/api.xro/2.0/Accounts"
+  }
+]
